@@ -1,4 +1,5 @@
 import { RollupOptions, RollupWarning } from 'rollup';
+import API from '../API';
 import { output } from './utils/output';
 import path from 'path';
 import resolve from '@rollup/plugin-node-resolve';
@@ -124,7 +125,11 @@ export default function rollupConfig(
     babel({
       include: entries.app,
       extensions: without(extensions, '.json'),
-      usePlugins: [nativeComponentsBabelPlugin(options, adapter), app],
+      usePlugins: [
+        nativeComponentsBabelPlugin(options, adapter),
+        app,
+        ...API.transformAppPlugins(),
+      ],
       reactPreset: false,
     }),
     babel({
@@ -258,6 +263,8 @@ export default function rollupConfig(
   } else if (options.rollupOptions) {
     config = { ...config, ...options.rollupOptions };
   }
+
+  config = API.extendsRollupConfig({ rollupConfig: config });
 
   return config;
 }

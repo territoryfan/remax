@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import API from './API';
 import { RemaxOptions } from './getConfig';
 import readManifest from './readManifest';
 import { Adapter } from './build/adapters';
@@ -32,8 +33,7 @@ interface AppConfig {
   plugins?: Plugins;
 }
 
-interface Entries {
-  pageConfigPath: string[];
+export interface Entries {
   app: string;
   pages: Array<{ path: string; file: string }>;
   images: string[];
@@ -90,7 +90,6 @@ export default function getEntries(
   }
 
   const entries: Entries = {
-    pageConfigPath: [],
     app: searchFile(path.join(options.cwd, options.rootDir, 'app'), true),
     pages: [],
     images: [],
@@ -132,5 +131,5 @@ export default function getEntries(
       return [...paths, path.join(options.cwd, options.rootDir, image)];
     }, []);
 
-  return entries;
+  return API.getEntries(entries);
 }
