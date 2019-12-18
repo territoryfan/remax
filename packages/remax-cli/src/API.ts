@@ -2,8 +2,8 @@ import yargs from 'yargs';
 import * as path from 'path';
 import { flatten } from 'lodash';
 import { RollupOptions } from 'rollup';
-import getConfig, { RemaxOptions } from '../getConfig';
-import { Entries } from '../getEntries';
+import getConfig, { RemaxOptions } from './getConfig';
+import { Entries } from './getEntries';
 
 export type CLI = typeof yargs;
 export type ExtendsCLIOptions = { cli: CLI };
