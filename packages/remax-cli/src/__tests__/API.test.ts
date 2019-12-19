@@ -12,7 +12,7 @@ describe('API', () => {
   });
 
   it('install plugins in a variety of ways', () => {
-    expect(API.configs).toHaveLength(10);
+    expect(API.configs).toHaveLength(12);
   });
 
   it('extends CLI', () => {
@@ -64,6 +64,12 @@ describe('API', () => {
     const babelPlugins = API.processJSX();
 
     expect(babelPlugins).toHaveLength(2);
+  });
+
+  it('generateNativeFiles', () => {
+    const rollupPlugins = API.generateNativeFiles();
+
+    expect(rollupPlugins).toHaveLength(2);
   });
 
   it('extendsRollupConfig', () => {

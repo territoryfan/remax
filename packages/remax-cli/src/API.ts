@@ -57,6 +57,11 @@ export interface RemaxNodePluginConfig {
    */
   processJSX?: () => Function;
   /**
+   * 生成原生文件，包括模板，样式等等
+   * @return rollup 插件
+   */
+  generateNativeFiles?: () => Function;
+  /**
    * 扩展 Rollup Config
    * @param options
    * @param options.rollupConfig Remax 生成的 Rollup Options 对象
@@ -90,9 +95,9 @@ class API {
     };
 
     this.configs.forEach(config => {
-      extensions.jsHelper = config.extensions?.jsHelper ?? '';
-      extensions.template = config.extensions?.template ?? '';
-      extensions.style = config.extensions?.style ?? '';
+      extensions.jsHelper = config.extensions?.jsHelper ?? extensions.jsHelper;
+      extensions.template = config.extensions?.template ?? extensions.template;
+      extensions.style = config.extensions?.style ?? extensions.style;
     });
 
     return extensions;
@@ -134,6 +139,18 @@ class API {
     });
 
     return babelPlugins;
+  }
+
+  public generateNativeFiles() {
+    const rollupPlugins: Function[] = [];
+
+    this.configs.forEach(config => {
+      if (typeof config.generateNativeFiles === 'function') {
+        rollupPlugins.push(config.generateNativeFiles());
+      }
+    });
+
+    return rollupPlugins;
   }
 
   public processJSX() {

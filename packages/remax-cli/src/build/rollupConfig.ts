@@ -211,6 +211,7 @@ export default function rollupConfig(
       entries.pages.map(p => p.file)
     ),
     template(options, adapter, context),
+    ...API.generateNativeFiles(),
   ];
 
   /* istanbul ignore next */

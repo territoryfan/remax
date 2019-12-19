@@ -10,5 +10,7 @@ module.exports = {
     'jsx1',
     'jsx2',
     'extensions',
+    'native-files1',
+    'native-files2',
   ],
 };
