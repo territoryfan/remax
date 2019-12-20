@@ -2,9 +2,9 @@ import Container from './Container';
 
 type ExtendsAppConfigOptions = { appConfig: any };
 type ExtendsPageConfigOptions = { pageConfig: any };
-type GetSyntheticEventIdOptions = { nativeEvent: any };
-type IsNewSyntheticEventOptions = { nativeEvent: any };
-type OnUpdateActionOptions = { container: Container };
+type GetEventTargetId = { nativeEvent: any };
+type GetEventCurrentTargetId = { nativeEvent: any };
+type OnUpdateActionOptions = { container: Container; action: any };
 type OnUnloadOptions = { container: Container };
 
 export interface RemaxRuntimePluginConfig {
@@ -25,23 +25,24 @@ export interface RemaxRuntimePluginConfig {
    */
   extendsPageConfig?: (options: ExtendsPageConfigOptions) => any;
   /**
-   * 根据原生事件生成对应合成事件ID
+   * 获取事件的 target ID
    * @param options
    * @param options.nativeEvent 原生事件
-   * @return 合成事件唯一 ID
+   * @return 事件 target ID
    */
-  getSyntheticEventId?: (options: GetSyntheticEventIdOptions) => string;
+  getEventTargetId?: (options: GetEventTargetId) => string;
   /**
-   * 根据原生事件判断是不是新的合成事件流
+   * 获取事件的 current target ID
    * @param options
    * @param options.nativeEvent 原生事件
-   * @return boolean
+   * @return 事件 current target ID
    */
-  isNewSyntheticEvent?: (options: IsNewSyntheticEventOptions) => boolean;
+  getEventCurrentTargetId?: (options: GetEventCurrentTargetId) => string;
   /**
    * 自定义执行 setData 时发起的 update action
    * @param options
    * @param options.container 发起 setData 操作的 Container
+   * @param options.action 其他插件处理过的 action 对象
    * @return 返回创建的 action
    *
    */
@@ -53,3 +54,77 @@ export interface RemaxRuntimePluginConfig {
    */
   onUnload?: (options: OnUnloadOptions) => void;
 }
+
+export type RemaxRuntimePlugin = (options?: any) => RemaxRuntimePluginConfig;
+
+class API {
+  public configs: RemaxRuntimePluginConfig[] = [];
+
+  public installPlugins(pluginConfigs: RemaxRuntimePluginConfig[]) {
+    this.configs = [...this.configs, ...pluginConfigs];
+  }
+
+  public extendsAppConfig(options: ExtendsAppConfigOptions) {
+    return this.configs.reduce((appConfig, config) => {
+      if (typeof config.extendsAppConfig === 'function') {
+        return config.extendsAppConfig({ appConfig });
+      }
+
+      return appConfig;
+    }, options.appConfig);
+  }
+
+  public extendsPageConfig(options: ExtendsPageConfigOptions) {
+    return this.configs.reduce((pageConfig, config) => {
+      if (typeof config.extendsPageConfig === 'function') {
+        return config.extendsPageConfig({ pageConfig });
+      }
+
+      return pageConfig;
+    }, options.pageConfig);
+  }
+
+  public getEventTargetId(options: GetEventTargetId) {
+    let id = null;
+
+    this.configs.forEach(config => {
+      if (typeof config.getEventTargetId === 'function') {
+        id = config.getEventTargetId(options);
+      }
+    });
+
+    return id;
+  }
+
+  public getEventCurrentTargetId(options: GetEventCurrentTargetId) {
+    let id = null;
+
+    this.configs.forEach(config => {
+      if (typeof config.getEventCurrentTargetId === 'function') {
+        id = config.getEventCurrentTargetId(options);
+      }
+    });
+
+    return id;
+  }
+
+  public onUpdateAction(options: OnUpdateActionOptions) {
+    return this.configs.reduce((action, config) => {
+      if (typeof config.onUpdateAction === 'function') {
+        return config.onUpdateAction({ ...options, action });
+      }
+
+      return action;
+    }, options.action);
+  }
+
+  public onUnload(options: OnUnloadOptions) {
+    this.configs.forEach(config => {
+      if (typeof config.onUnload === 'function') {
+        config.onUnload(options);
+      }
+    });
+  }
+}
+
+export default new API();

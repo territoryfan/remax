@@ -1,4 +1,5 @@
 import VNode, { Path, RawNode } from './VNode';
+import API from './API';
 import { generate } from './instanceId';
 import { generate as generateActionId } from './actionId';
 import { FiberRoot } from 'react-reconciler';
@@ -95,7 +96,12 @@ export default class Container {
       };
     }
 
-    this.context.setData({ action: tree }, () => {
+    const updateAction = API.onUpdateAction({
+      container: this,
+      action: { action: tree },
+    });
+
+    this.context.setData(updateAction, () => {
       /* istanbul ignore next */
       if (process.env.REMAX_DEBUG) {
         console.log(
@@ -109,6 +115,8 @@ export default class Container {
 
   clearUpdate() {
     this.stopUpdate = true;
+
+    API.onUnload({ container: this });
 
     if (Platform.isWechat) {
       this.context.setData({
