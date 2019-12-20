@@ -197,7 +197,8 @@ class API {
       const packagePath = path.join(
         remaxConfig.cwd,
         'node_modules',
-        packageName
+        packageName,
+        'node'
       );
       delete require.cache[packagePath];
       return require(packagePath);
