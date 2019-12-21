@@ -9,6 +9,7 @@ import url from '@remax/rollup-plugin-url';
 import json from '@rollup/plugin-json';
 import postcss from '@remax/rollup-plugin-postcss';
 import postcssUrl from './plugins/postcssUrl';
+import runtimePlugins from './plugins/remaxRuntimePlugins';
 import progress from 'rollup-plugin-progress';
 import clean from 'rollup-plugin-delete';
 import copy from 'rollup-plugin-copy';
@@ -76,6 +77,9 @@ export default function rollupConfig(
   });
 
   const plugins = [
+    runtimePlugins({
+      entries,
+    }),
     copy({
       targets: [
         {

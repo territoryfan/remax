@@ -2,8 +2,9 @@ import yargs from 'yargs';
 import * as path from 'path';
 import { flatten } from 'lodash';
 import { RollupOptions } from 'rollup';
-import getConfig, { RemaxOptions } from './getConfig';
-import { Entries } from './getEntries';
+import getConfig, { RemaxOptions } from '../getConfig';
+import { Entries } from '../getEntries';
+import { existsSync } from 'fs';
 
 export type CLI = typeof yargs;
 export type ExtendsCLIOptions = { cli: CLI };
@@ -176,20 +177,36 @@ class API {
     return rollupConfig;
   }
 
-  public installPlugins() {
+  public installNodePlugins() {
     const remaxConfig = getConfig();
 
     remaxConfig.plugins.forEach(plugin => {
       const [name, options] = flatten([plugin]);
-      const pluginConfig: RemaxNodePluginConfig = this.getPlugin(
+      const pluginFn: RemaxNodePlugin | null = this.getNodePlugin(
         name,
         remaxConfig
-      )(options);
-      this.configs.push(pluginConfig);
+      );
+
+      if (typeof pluginFn === 'function') {
+        this.configs.push(pluginFn(options));
+      }
     });
   }
 
-  private getPlugin(id: string | Function, remaxConfig: RemaxOptions) {
+  public getRuntimePlugins() {
+    const remaxConfig = getConfig();
+
+    return remaxConfig.plugins.map(plugin => {
+      const [id] = flatten([plugin]);
+      const packageName = id.startsWith('remax-plugin')
+        ? id
+        : 'remax-plugin-' + id;
+
+      return packageName + '/runtime';
+    });
+  }
+
+  private getNodePlugin(id: string | Function, remaxConfig: RemaxOptions) {
     if (typeof id === 'string') {
       const packageName = id.startsWith('remax-plugin')
         ? id
@@ -200,6 +217,11 @@ class API {
         packageName,
         'node'
       );
+
+      if (!existsSync(packagePath + '.js')) {
+        return null;
+      }
+
       delete require.cache[packagePath];
       return require(packagePath);
     }

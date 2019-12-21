@@ -3,6 +3,7 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var _rollupPluginBabelHelpers = require('./_virtual/_rollupPluginBabelHelpers.js');
+var API = require('../../npm/remax/esm/API.js');
 require('../../npm/remax/esm/render.js');
 var React = require('react');
 var createAppConfig = require('../../npm/remax/esm/createAppConfig.js');
@@ -11,6 +12,10 @@ require('../../npm/remax/esm/createHostComponent.js');
 require('../../npm/remax/esm/createPageConfig.js');
 require('../../npm/remax/esm/createNativeComponent.js');
 require('../../npm/remax/esm/index.js');
+
+var __REMAX_RUNTIME_PLUGIN_CONFIGS = [];
+
+API.default.installPlugins(__REMAX_RUNTIME_PLUGIN_CONFIGS);
 
 var _ref =
 /*#__PURE__*/

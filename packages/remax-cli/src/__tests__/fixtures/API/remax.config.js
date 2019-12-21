@@ -2,7 +2,7 @@ module.exports = {
   plugins: [
     'cli',
     'remax-plugin-entries',
-    require('remax-plugin-rollup-config'),
+    'remax-plugin-rollup-config',
     'app1',
     'app2',
     'page1',
@@ -12,5 +12,6 @@ module.exports = {
     'extensions',
     'native-files1',
     'native-files2',
+    'dont-exist',
   ],
 };

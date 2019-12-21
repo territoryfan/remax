@@ -2,7 +2,7 @@ import API from './API';
 
 export { RemaxNodePluginConfig } from './API';
 
-API.installPlugins();
+API.installNodePlugins();
 
 import yargs from 'yargs';
 import build from './build';

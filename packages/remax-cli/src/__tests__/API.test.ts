@@ -8,7 +8,7 @@ import API from '../API';
 
 describe('API', () => {
   beforeAll(() => {
-    API.installPlugins();
+    API.installNodePlugins();
   });
 
   it('install plugins in a variety of ways', () => {
