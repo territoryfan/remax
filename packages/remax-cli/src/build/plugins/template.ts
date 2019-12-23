@@ -283,7 +283,7 @@ export default function template(
           const chunk = bundle[file];
           if (isRemaxEntry(chunk)) {
             const filePath = Object.keys(chunk.modules)[0];
-            const page = pages.find(p => p.file === filePath);
+            const page = pages.find(p => p === filePath);
             if (page) {
               const template = await createTemplate(file, adapter, options);
               templateAssets.push(template);

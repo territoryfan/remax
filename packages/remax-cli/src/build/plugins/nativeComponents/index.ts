@@ -65,14 +65,14 @@ export default (
       const extract = (node: any) => {
         const source: string = get(node, 'source.value');
         const name: string = get(node, 'specifiers[0].local.name');
-        const componentPath = getSourcePath(options, adapter, source, id);
+        const componentPath = getSourcePath(options, source, id);
         const component = importer.get(componentPath);
 
         if (!component) {
           return;
         }
 
-        if (!isPluginComponent(componentPath, options, adapter)) {
+        if (!isPluginComponent(componentPath, options)) {
           this.emitFile({
             id: path.relative(options.cwd, componentPath),
             type: 'chunk',

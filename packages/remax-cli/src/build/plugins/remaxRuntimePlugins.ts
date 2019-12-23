@@ -3,19 +3,21 @@ import { Entries } from '../../getEntries';
 import MagicString from 'magic-string';
 import API from '../../API';
 import { readFileSync } from 'fs';
+import { RemaxOptions } from '../../getConfig';
 
 interface Options {
   entries: Entries;
+  options: RemaxOptions;
 }
 
-export default ({ entries }: Options): Plugin => ({
+export default ({ entries, options }: Options): Plugin => ({
   name: 'remax-runtime-plugins',
   load(id) {
     if (id !== entries.app) {
       return null;
     }
 
-    const plugins = API.getRuntimePlugins();
+    const plugins = API.getRuntimePlugins(options);
     const code = readFileSync(id).toString();
     const magicString = new MagicString(code);
 

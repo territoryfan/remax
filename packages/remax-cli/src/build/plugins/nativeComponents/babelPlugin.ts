@@ -53,12 +53,7 @@ export default (options: RemaxOptions, adapter: Adapter) => {
         const importer: string = state.file.opts.filename;
         const node = path.node;
 
-        const sourcePath = getSourcePath(
-          options,
-          adapter,
-          node.source.value,
-          importer
-        );
+        const sourcePath = getSourcePath(options, node.source.value, importer);
         if (!isNativeComponent(sourcePath)) {
           return;
         }
@@ -95,11 +90,11 @@ export default (options: RemaxOptions, adapter: Adapter) => {
           }
 
           const source = componentPath.parent.source.value;
-          const sourcePath = getSourcePath(options, adapter, source, importer);
+          const sourcePath = getSourcePath(options, source, importer);
 
           if (
             !isNativeComponent(sourcePath) &&
-            !isPluginComponent(sourcePath, options, adapter)
+            !isPluginComponent(sourcePath, options)
           ) {
             return;
           }

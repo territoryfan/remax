@@ -2,13 +2,17 @@ import yargs from 'yargs';
 import * as path from 'path';
 import { flatten } from 'lodash';
 import { RollupOptions } from 'rollup';
-import getConfig, { RemaxOptions } from '../getConfig';
-import { Entries } from '../getEntries';
+import { RemaxOptions } from '../getConfig';
+import { AppConfig, Entries, searchFile } from '../getEntries';
 import { existsSync } from 'fs';
 
 export type CLI = typeof yargs;
 export type ExtendsCLIOptions = { cli: CLI };
-export type GetEntriesOptions = { remaxOptions: RemaxOptions };
+export type GetEntriesOptions = {
+  remaxOptions: RemaxOptions;
+  appManifest: AppConfig;
+  getEntryPath: (entryPath: string) => string;
+};
 export type ExtendsRollupConfigOptions = { rollupConfig: RollupOptions };
 export type Extensions = {
   template: string;
@@ -36,6 +40,7 @@ export interface RemaxNodePluginConfig {
    * 定义 rollup 入口文件
    * @param options
    * @param options.remaxOptions Remax Config 参数
+   * @param options.appManifest app.config.js|ts 内容
    * @return entries 对象，其中包含：
    * entreis.app app 文件路径
    * entreis.pages pages 文件路径数组
@@ -78,6 +83,7 @@ class API {
   public configs: RemaxNodePluginConfig[] = [];
   public adapter = {
     name: '',
+    packageName: '',
     options: {},
   };
 
@@ -108,12 +114,20 @@ class API {
     return extensions;
   }
 
-  public getEntries(entries: Entries) {
+  public getEntries(
+    entries: Entries,
+    appManifest: AppConfig,
+    remaxOptions: RemaxOptions
+  ) {
     this.configs.forEach(config => {
       if (typeof config.getEntries === 'function') {
-        const currentEntries = config.getEntries({ remaxOptions: getConfig() });
+        const currentEntries = config.getEntries({
+          remaxOptions,
+          appManifest,
+          getEntryPath: (entryPath: string) => searchFile(entryPath, true),
+        });
 
-        entries.app = currentEntries.app ?? entries.app;
+        entries.app = currentEntries.app || entries.app;
         entries.pages = [...entries.pages, ...currentEntries.pages];
         entries.images = [...entries.images, ...currentEntries.images];
       }
@@ -182,9 +196,10 @@ class API {
   }
 
   public installAdapterPlugins(adapterName: string) {
-    this.adapter.name = 'remax-' + adapterName;
+    this.adapter.name = adapterName;
+    this.adapter.packageName = 'remax-' + adapterName;
 
-    const packagePath = this.adapter.name + '/node';
+    const packagePath = this.adapter.packageName + '/node';
 
     delete require.cache[packagePath];
     const pluginFn = require(packagePath).default || require(packagePath);
@@ -194,9 +209,7 @@ class API {
     }
   }
 
-  public installNodePlugins() {
-    const remaxConfig = getConfig();
-
+  public installNodePlugins(remaxConfig: RemaxOptions) {
     remaxConfig.plugins.forEach(plugin => {
       const [name, options] = flatten([plugin]);
       const pluginFn: RemaxNodePlugin | null = this.getNodePlugin(
@@ -210,9 +223,7 @@ class API {
     });
   }
 
-  public getRuntimePlugins() {
-    const remaxConfig = getConfig();
-
+  public getRuntimePlugins(remaxConfig: RemaxOptions) {
     return remaxConfig.plugins
       .map(plugin => {
         const [id] = flatten([plugin]);

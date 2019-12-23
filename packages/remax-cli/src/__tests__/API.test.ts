@@ -6,9 +6,11 @@ import yargs from 'yargs';
 import getConfig from '../getConfig';
 import API from '../API';
 
+const remaxOptions = getConfig();
+
 describe('API', () => {
   beforeAll(() => {
-    API.installNodePlugins();
+    API.installNodePlugins(remaxOptions);
     API.installAdapterPlugins('alipay');
   });
 
@@ -17,7 +19,8 @@ describe('API', () => {
   });
 
   it('install adapter plugin', () => {
-    expect(API.adapter.name).toEqual('remax-alipay');
+    expect(API.adapter.name).toEqual('alipay');
+    expect(API.adapter.packageName).toEqual('remax-alipay');
   });
 
   it('extends CLI', () => {
@@ -28,27 +31,23 @@ describe('API', () => {
   });
 
   it('getEntries', () => {
-    const defaultPage = {
-      path: 'defaultPagePath',
-      file: 'defaultPageFile',
-    };
+    const defaultPage = 'defaultPageFile';
     const defaultImage = 'defaultImage';
-    const entries = API.getEntries({
-      app: 'defaultApp',
-      pages: [defaultPage],
-      images: [defaultImage],
-    });
-    const remaxOptions = getConfig();
+    const entries = API.getEntries(
+      {
+        app: 'defaultApp',
+        pages: [defaultPage],
+        images: [defaultImage],
+      },
+      {
+        pages: [defaultPage],
+      },
+      remaxOptions
+    );
 
     expect(entries).toEqual({
-      app: remaxOptions.cwd,
-      pages: [
-        defaultPage,
-        {
-          path: remaxOptions.cwd,
-          file: 'page',
-        },
-      ],
+      app: path.join(remaxOptions.cwd, remaxOptions.rootDir, 'app.js'),
+      pages: [defaultPage, 'page'],
       images: [defaultImage, remaxOptions.cwd],
     });
   });
@@ -99,7 +98,7 @@ describe('API', () => {
   });
 
   it('runtime plugins', () => {
-    const plugins = API.getRuntimePlugins();
+    const plugins = API.getRuntimePlugins(remaxOptions);
 
     expect(plugins).toHaveLength(2);
   });

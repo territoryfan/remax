@@ -53,7 +53,7 @@ export default function rollupConfig(
     }
   });
 
-  const entries = getEntries(options, adapter, context);
+  const entries = getEntries(options, context);
   const cssModuleConfig = getCssModuleConfig(options.cssModules);
 
   // 获取 postcss 配置
@@ -79,6 +79,7 @@ export default function rollupConfig(
   const plugins = [
     runtimePlugins({
       entries,
+      options,
     }),
     copy({
       targets: [
@@ -121,7 +122,7 @@ export default function rollupConfig(
       modules: stubModules,
     }),
     babel({
-      include: entries.pages.map(p => p.file),
+      include: entries.pages,
       extensions: without(extensions, '.json'),
       usePlugins: [nativeComponentsBabelPlugin(options, adapter), page],
       reactPreset: false,
@@ -209,11 +210,7 @@ export default function rollupConfig(
     }),
     removeSrc(options),
     fixRegeneratorRuntime(),
-    nativeComponents(
-      options,
-      adapter,
-      entries.pages.map(p => p.file)
-    ),
+    nativeComponents(options, adapter, entries.pages),
     template(options, adapter, context),
     ...API.generateNativeFiles(),
   ];
@@ -233,7 +230,7 @@ export default function rollupConfig(
 
   let config: RollupOptions = {
     treeshake: process.env.NODE_ENV === 'production',
-    input: [entries.app, ...entries.pages.map(p => p.file), ...entries.images],
+    input: [entries.app, ...entries.pages, ...entries.images],
     output: {
       dir: options.output,
       format: adapter.moduleFormat,

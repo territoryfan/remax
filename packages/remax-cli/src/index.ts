@@ -1,8 +1,10 @@
 import API from './API';
+import getConfig from './getConfig';
 
 export { RemaxNodePluginConfig, RemaxNodePlugin } from './API';
+export { Entries } from './getEntries';
 
-API.installNodePlugins();
+API.installNodePlugins(getConfig());
 
 import yargs from 'yargs';
 import build from './build';
