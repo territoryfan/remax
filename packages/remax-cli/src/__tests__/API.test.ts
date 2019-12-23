@@ -9,10 +9,15 @@ import API from '../API';
 describe('API', () => {
   beforeAll(() => {
     API.installNodePlugins();
+    API.installAdapterPlugins('alipay');
   });
 
   it('install plugins in a variety of ways', () => {
-    expect(API.configs).toHaveLength(12);
+    expect(API.configs).toHaveLength(13);
+  });
+
+  it('install adapter plugin', () => {
+    expect(API.adapter.name).toEqual('remax-alipay');
   });
 
   it('extends CLI', () => {
@@ -87,9 +92,15 @@ describe('API', () => {
   it('getExtensions', () => {
     const extensions = API.getExtensions();
     expect(extensions).toEqual({
-      template: 'axml',
-      style: 'axss',
-      jsHelper: 'sjs',
+      template: '.axml',
+      style: '.acss',
+      jsHelper: '.sjs',
     });
+  });
+
+  it('runtime plugins', () => {
+    const plugins = API.getRuntimePlugins();
+
+    expect(plugins).toHaveLength(2);
   });
 });

@@ -13,7 +13,7 @@ require('../../npm/remax/esm/createPageConfig.js');
 require('../../npm/remax/esm/createNativeComponent.js');
 require('../../npm/remax/esm/index.js');
 
-var __REMAX_RUNTIME_PLUGIN_CONFIGS = [];
+var __REMAX_RUNTIME_PLUGIN_CONFIGS = [require('remax-alipay/runtime')()];
 
 API.default.installPlugins(__REMAX_RUNTIME_PLUGIN_CONFIGS);
 

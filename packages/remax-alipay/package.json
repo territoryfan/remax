@@ -1,0 +1,19 @@
+{
+  "name": "remax-alipay",
+  "version": "0.0.2",
+  "description": "Remax for Alipay",
+  "main": "index.js",
+  "scripts": {
+    "build:node": "tsc --build tsconfig.node.json",
+    "build": "npm run build:node"
+  },
+  "repository": "git+https://github.com/remaxjs/remax.git",
+  "license": "MIT",
+  "dependencies": {
+    "@remax/mini-types": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.24",
+    "typescript": "^3.7.4"
+  }
+}

@@ -8,7 +8,7 @@ var React = require('react');
 var createAppConfig = require('../../npm/remax/esm/createAppConfig.js');
 require('../../npm/remax/esm/index.js');
 
-var __REMAX_RUNTIME_PLUGIN_CONFIGS = [require('remax-plugin-test/runtime')()];
+var __REMAX_RUNTIME_PLUGIN_CONFIGS = [require('remax-alipay/runtime')()];
 
 API.default.installPlugins(__REMAX_RUNTIME_PLUGIN_CONFIGS);
 

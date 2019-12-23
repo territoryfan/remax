@@ -1,11 +1,15 @@
 import * as path from 'path';
 import * as rollup from 'rollup';
+import API from '../../API';
 import rollupConfig from '../../build/rollupConfig';
 import getConfig from '../../getConfig';
 
 export default async function build(app: string, target: string) {
   const cwd = path.resolve(__dirname, `../fixtures/${app}`);
   process.chdir(cwd);
+
+  API.installAdapterPlugins(target);
+
   const config = getConfig();
   const adapter = require('../../build/adapters/' + target);
   const rollupOptions = rollupConfig(

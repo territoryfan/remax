@@ -181,7 +181,7 @@ export default function rollupConfig(
           cssModuleConfig.globalModulePaths.some(reg => reg.test(input)) ||
           input.indexOf('app.css') !== -1
         ) {
-          return input.replace(/\.css/, adapter.extensions.style);
+          return input.replace(/\.css/, API.getExtensions().style);
         }
 
         return input.replace(/\.css/, '.css.js');

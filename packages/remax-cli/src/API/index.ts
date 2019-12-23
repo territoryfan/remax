@@ -76,6 +76,10 @@ export type RemaxNodePlugin = (options?: any) => RemaxNodePluginConfig;
 
 class API {
   public configs: RemaxNodePluginConfig[] = [];
+  public adapter = {
+    name: '',
+    options: {},
+  };
 
   public extendsCLI(options: ExtendsCLIOptions) {
     let { cli } = options;
@@ -177,6 +181,19 @@ class API {
     return rollupConfig;
   }
 
+  public installAdapterPlugins(adapterName: string) {
+    this.adapter.name = 'remax-' + adapterName;
+
+    const packagePath = this.adapter.name + '/node';
+
+    delete require.cache[packagePath];
+    const pluginFn = require(packagePath).default || require(packagePath);
+
+    if (typeof pluginFn === 'function') {
+      this.configs.push(pluginFn());
+    }
+  }
+
   public installNodePlugins() {
     const remaxConfig = getConfig();
 
@@ -196,14 +213,25 @@ class API {
   public getRuntimePlugins() {
     const remaxConfig = getConfig();
 
-    return remaxConfig.plugins.map(plugin => {
-      const [id] = flatten([plugin]);
-      const packageName = id.startsWith('remax-plugin')
-        ? id
-        : 'remax-plugin-' + id;
+    return remaxConfig.plugins
+      .map(plugin => {
+        const [id] = flatten([plugin]);
+        const packageName = id.startsWith('remax-plugin')
+          ? id
+          : 'remax-plugin-' + id;
 
-      return packageName + '/runtime';
-    });
+        return packageName + '/runtime';
+      })
+      .filter(packageName => {
+        const packagePath = path.join(
+          remaxConfig.cwd,
+          'node_modules',
+          packageName
+        );
+
+        return existsSync(packagePath + '.js');
+      })
+      .concat(this.adapter.name + '/runtime');
   }
 
   private getNodePlugin(id: string | Function, remaxConfig: RemaxOptions) {

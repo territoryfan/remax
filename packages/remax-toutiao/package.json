@@ -1,0 +1,17 @@
+{
+  "name": "remax-toutiao",
+  "version": "0.0.1",
+  "description": "Remax for Toutiao",
+  "main": "index.js",
+  "scripts": {
+    "build:node": "tsc --build tsconfig.node.json",
+    "build": "npm run build:node"
+  },
+  "repository": "git+https://github.com/remaxjs/remax.git",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^24.0.24",
+    "typescript": "^3.7.4"
+  }
+}

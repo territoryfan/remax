@@ -1,6 +1,6 @@
 import API from './API';
 
-export { RemaxNodePluginConfig } from './API';
+export { RemaxNodePluginConfig, RemaxNodePlugin } from './API';
 
 API.installNodePlugins();
 

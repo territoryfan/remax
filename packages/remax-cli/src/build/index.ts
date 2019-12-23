@@ -1,6 +1,7 @@
 import * as rollup from 'rollup';
 import * as path from 'path';
 import * as fs from 'fs';
+import API from '../API';
 import winPath from '../winPath';
 import esm from 'esm';
 import rollupConfig from './rollupConfig';
@@ -14,6 +15,8 @@ export default async (argv: any, context?: Context) => {
     ...getConfig(),
     ...(context ? context.config : {}),
   };
+
+  API.installAdapterPlugins(argv.target);
 
   if (
     !fs.existsSync(winPath(path.join(__dirname, `./adapters/${argv.target}`)))
