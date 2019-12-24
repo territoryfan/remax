@@ -3,6 +3,7 @@ import getConfig from './getConfig';
 
 export { RemaxNodePluginConfig, RemaxNodePlugin } from './API';
 export { Entries } from './getEntries';
+export { default as logger } from './build/utils/output';
 
 API.installNodePlugins(getConfig());
 
@@ -10,7 +11,7 @@ import yargs from 'yargs';
 import build from './build';
 import { checkRemaxVersion } from './checkVersions';
 
-export { RemaxConfig } from './getConfig';
+export { RemaxConfig, RemaxOptions } from './getConfig';
 
 export let cli = yargs;
 

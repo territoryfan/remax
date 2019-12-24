@@ -1,6 +1,6 @@
 import yargs from 'yargs';
 import * as path from 'path';
-import { flatten } from 'lodash';
+import { flatten, merge } from 'lodash';
 import { RollupOptions } from 'rollup';
 import { RemaxOptions } from '../getConfig';
 import { AppConfig, Entries, searchFile } from '../getEntries';
@@ -14,21 +14,42 @@ export type GetEntriesOptions = {
   getEntryPath: (entryPath: string) => string;
 };
 export type ExtendsRollupConfigOptions = { rollupConfig: RollupOptions };
-export type Extensions = {
-  template: string;
+export type Meta = {
+  template: {
+    extension: string;
+    tag: string;
+    src: string;
+  };
   style: string;
-  jsHelper: string;
+  jsHelper: {
+    extension: string;
+    tag: string;
+    src: string;
+  };
+  include: {
+    tag: string;
+    src: string;
+  };
+  ejs: {
+    base?: string;
+    page: string;
+    jsHelper?: string;
+  };
+};
+
+export type ProcessPropsOptions = {
+  componentName: string;
+  props: string[];
+};
+
+export type ShouldHostComponentRegister = {
+  componentName: string;
+  additional: boolean;
 };
 
 export interface RemaxNodePluginConfig {
-  /**
-   * 定义原生文件对应的后缀名
-   * template: 模板文件后缀名
-   * style: 样式文件后缀名
-   * jsHelper: wxs/sjs 等文件的后缀名
-   *
-   */
-  extensions?: Extensions;
+  meta?: Meta;
+  hostComponents?: any;
   /**
    * 扩展 CLI 命令
    * @param options
@@ -48,25 +69,22 @@ export interface RemaxNodePluginConfig {
    */
   getEntries?: (options: GetEntriesOptions) => Entries;
   /**
-   * 自定义如何处理 app 文件
-   * @return babel 插件e
+   * 自定义组件属性
+   * @param options
+   * @param options.componentName 组件名称
+   * @param options.props 组件属性
+   * @return 组件对应的属性
    */
-  transformApp?: () => Function;
+  processProps?: (options: ProcessPropsOptions) => string[];
   /**
-   * 自定义如何处理 page 文件
-   * @return babel 插件
+   * 是否注册组件
+   * @param options
+   * @param options.componentName 组件名称
+   * @param options.additional 是否是额外定义的组件
    */
-  transformPage?: () => Function;
-  /**
-   * 自定义处理 JSX 标签
-   * @return babel 插件
-   */
-  processJSX?: () => Function;
-  /**
-   * 生成原生文件，包括模板，样式等等
-   * @return rollup 插件
-   */
-  generateNativeFiles?: () => Function;
+  shouldHostComponentRegister?: (
+    options: ShouldHostComponentRegister
+  ) => boolean;
   /**
    * 扩展 Rollup Config
    * @param options
@@ -86,7 +104,23 @@ class API {
     packageName: '',
     options: {},
   };
-
+  public meta = {
+    template: {
+      extension: '',
+      tag: '',
+      src: '',
+    },
+    style: '',
+    jsHelper: {
+      extension: '',
+      tag: '',
+      src: '',
+    },
+    include: {
+      tag: '',
+      src: '',
+    },
+  };
   public extendsCLI(options: ExtendsCLIOptions) {
     let { cli } = options;
     this.configs.forEach(config => {
@@ -98,20 +132,45 @@ class API {
     return cli;
   }
 
-  public getExtensions() {
-    const extensions: Extensions = {
-      jsHelper: '',
-      template: '',
+  public getMeta() {
+    let meta: Meta = {
+      template: {
+        extension: '',
+        tag: '',
+        src: '',
+      },
       style: '',
+      jsHelper: {
+        extension: '',
+        tag: '',
+        src: '',
+      },
+      include: {
+        tag: '',
+        src: '',
+      },
+      ejs: {
+        page: '',
+      },
     };
 
     this.configs.forEach(config => {
-      extensions.jsHelper = config.extensions?.jsHelper ?? extensions.jsHelper;
-      extensions.template = config.extensions?.template ?? extensions.template;
-      extensions.style = config.extensions?.style ?? extensions.style;
+      meta = merge(meta, config.meta || {});
     });
 
-    return extensions;
+    return meta;
+  }
+
+  public getHostComponents() {
+    return new Map<string, any>(
+      this.configs.reduce<any>((maps, config) => {
+        if (config.hostComponents) {
+          return [...maps, ...config.hostComponents];
+        }
+
+        return maps;
+      }, [])
+    );
   }
 
   public getEntries(
@@ -136,52 +195,33 @@ class API {
     return entries;
   }
 
-  public transformAppPlugins() {
-    const babelPlugins: Function[] = [];
-
-    this.configs.forEach(config => {
-      if (typeof config.transformApp === 'function') {
-        babelPlugins.push(config.transformApp());
+  public processProps(componentName: string, props: string[]) {
+    return this.configs.reduce((nextProps, config) => {
+      if (typeof config.processProps === 'function') {
+        return config.processProps({
+          componentName,
+          props: nextProps,
+        });
       }
-    });
 
-    return babelPlugins;
+      return nextProps;
+    }, props);
   }
 
-  public transformPagePlugins() {
-    const babelPlugins: Function[] = [];
-
-    this.configs.forEach(config => {
-      if (typeof config.transformPage === 'function') {
-        babelPlugins.push(config.transformPage());
+  public shouldHostComponentRegister(
+    componentName: string,
+    additional: boolean
+  ) {
+    return this.configs.reduce((result, config) => {
+      if (typeof config.shouldHostComponentRegister === 'function') {
+        return config.shouldHostComponentRegister({
+          componentName,
+          additional,
+        });
       }
-    });
 
-    return babelPlugins;
-  }
-
-  public generateNativeFiles() {
-    const rollupPlugins: Function[] = [];
-
-    this.configs.forEach(config => {
-      if (typeof config.generateNativeFiles === 'function') {
-        rollupPlugins.push(config.generateNativeFiles());
-      }
-    });
-
-    return rollupPlugins;
-  }
-
-  public processJSX() {
-    const babelPlugins: Function[] = [];
-
-    this.configs.forEach(config => {
-      if (typeof config.processJSX === 'function') {
-        babelPlugins.push(config.processJSX());
-      }
-    });
-
-    return babelPlugins;
+      return result;
+    }, true);
   }
 
   public extendsRollupConfig(options: ExtendsRollupConfigOptions) {
@@ -242,7 +282,7 @@ class API {
 
         return existsSync(packagePath + '.js');
       })
-      .concat(this.adapter.name + '/runtime');
+      .concat(this.adapter.packageName + '/runtime');
   }
 
   private getNodePlugin(id: string | Function, remaxConfig: RemaxOptions) {

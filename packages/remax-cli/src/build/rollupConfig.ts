@@ -17,8 +17,6 @@ import stub from './plugins/stub';
 import pxToUnits from '@remax/postcss-px2units';
 import getEntries from '../getEntries';
 import getCssModuleConfig from '../getCssModuleConfig';
-import template from './plugins/template';
-import components from './plugins/components';
 import page from './plugins/page';
 import removeSrc from './plugins/removeSrc';
 import rename from './plugins/rename';
@@ -29,8 +27,10 @@ import adapters, { Adapter } from './adapters';
 import { Context, Env } from '../types';
 import namedExports from 'named-exports-db';
 import fixRegeneratorRuntime from './plugins/fixRegeneratorRuntime';
-import nativeComponents from './plugins/nativeComponents/index';
 import nativeComponentsBabelPlugin from './plugins/nativeComponents/babelPlugin';
+import nativeComponents from './plugins/nativeComponents';
+import components from './plugins/components';
+import template from './plugins/template';
 import alias from './plugins/alias';
 import extensions from '../extensions';
 import { without } from 'lodash';
@@ -124,25 +124,18 @@ export default function rollupConfig(
     babel({
       include: entries.pages,
       extensions: without(extensions, '.json'),
-      usePlugins: [nativeComponentsBabelPlugin(options, adapter), page],
+      usePlugins: [nativeComponentsBabelPlugin(options), page],
       reactPreset: false,
     }),
     babel({
       include: entries.app,
       extensions: without(extensions, '.json'),
-      usePlugins: [
-        nativeComponentsBabelPlugin(options, adapter),
-        app,
-        ...API.transformAppPlugins(),
-      ],
+      usePlugins: [nativeComponentsBabelPlugin(options), app],
       reactPreset: false,
     }),
     babel({
       extensions: without(extensions, '.json'),
-      usePlugins: [
-        nativeComponentsBabelPlugin(options, adapter),
-        components(adapter),
-      ],
+      usePlugins: [nativeComponentsBabelPlugin(options), components()],
       reactPreset: true,
     }),
     postcss({
@@ -182,7 +175,7 @@ export default function rollupConfig(
           cssModuleConfig.globalModulePaths.some(reg => reg.test(input)) ||
           input.indexOf('app.css') !== -1
         ) {
-          return input.replace(/\.css/, API.getExtensions().style);
+          return input.replace(/\.css/, API.getMeta().style);
         }
 
         return input.replace(/\.css/, '.css.js');
@@ -210,9 +203,8 @@ export default function rollupConfig(
     }),
     removeSrc(options),
     fixRegeneratorRuntime(),
-    nativeComponents(options, adapter, entries.pages),
-    template(options, adapter, context),
-    ...API.generateNativeFiles(),
+    nativeComponents(options, entries.pages),
+    template(options, context),
   ];
 
   /* istanbul ignore next */
@@ -233,7 +225,7 @@ export default function rollupConfig(
     input: [entries.app, ...entries.pages, ...entries.images],
     output: {
       dir: options.output,
-      format: adapter.moduleFormat,
+      format: 'cjs',
       exports: 'named',
       sourcemap: false,
       extend: true,

@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "lib": ["es2015"],
+    "declaration": true,
+    "jsx": "react",
+    "types": ["@types/jest", "@types/node"],
+    "outDir": "cjs",
+    "downlevelIteration": true
+  },
+  "include": ["src/node/**/*", "typings/**/*"],
+  "exclude": []
+}

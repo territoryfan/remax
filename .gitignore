@@ -69,8 +69,3 @@ packages/*/yarn.lock
 packages/*/package-lock.json
 
 !/packages/**/__tests__/fixtures/**/node_modules
-
-packages/remax-alipay/node.js
-packages/remax-alipay/node.d.ts
-packages/remax-alipay/runtime.js
-packages/remax-alipay/runtime.d.ts

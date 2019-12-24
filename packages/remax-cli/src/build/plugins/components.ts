@@ -1,7 +1,16 @@
 import * as t from '@babel/types';
 import { NodePath } from '@babel/traverse';
 import { kebabCase, cloneDeep } from 'lodash';
-import { Adapter } from '../adapters';
+import API from '../../API';
+
+let hostComponents: Map<
+  string,
+  {
+    props: string[];
+    alias?: any;
+    additional?: boolean;
+  }
+>;
 
 export interface Component {
   id: string;
@@ -80,31 +89,30 @@ function shouldRegisterAllProps(node?: t.JSXElement, force?: boolean) {
   return false;
 }
 
-function registerProps(
-  componentName: string,
-  adapter: Adapter,
-  node?: t.JSXElement
-) {
-  const hostComponent = adapter.hostComponents.get(componentName);
+function registerProps(componentName: string, node?: t.JSXElement) {
+  const hostComponent = hostComponents.get(componentName);
 
   if (!hostComponent) {
     return;
   }
 
-  let usedProps = hostComponent.props.slice();
+  const usedProps = API.processProps(
+    componentName,
+    hostComponent.props.slice()
+  );
 
-  if (
-    adapter.name !== 'alipay' &&
-    !shouldRegisterAllProps(node, hostComponent.additional)
-  ) {
-    usedProps = [];
-  }
+  // if (
+  //   adapter.name !== 'alipay' &&
+  //   !shouldRegisterAllProps(node, hostComponent.additional)
+  // ) {
+  //   usedProps = [];
+  // }
 
-  if (adapter.name === 'wechat' && componentName === 'scroll-view') {
-    if (!usedProps.includes('onScroll')) {
-      usedProps.push('onScroll');
-    }
-  }
+  // if (adapter.name === 'wechat' && componentName === 'scroll-view') {
+  //   if (!usedProps.includes('onScroll')) {
+  //     usedProps.push('onScroll');
+  //   }
+  // }
 
   if (node) {
     node.openingElement.attributes.forEach(attr => {
@@ -125,31 +133,31 @@ function registerProps(
   return new Set(
     usedProps
       .filter(Boolean)
-      .map(prop => adapter.getNativePropName(prop, false, componentName))
+      .map(prop => hostComponent?.alias?.[prop] || prop)
       .sort()
   );
 }
 
-function registerComponent({
-  componentName,
-  adapter,
-  node,
-  importer = '',
-}: {
-  componentName: string;
-  adapter: Adapter;
-  node?: t.JSXElement;
-  importer?: string;
-}) {
-  if (componentName === 'swiper-item') {
+function registerComponent(
+  {
+    componentName,
+    node,
+    importer = '',
+  }: {
+    componentName: string;
+    node?: t.JSXElement;
+    importer?: string;
+  },
+  additional = false
+) {
+  // if (componentName === 'swiper-item') {
+  //   return;
+  // }
+  if (!API.shouldHostComponentRegister(componentName, additional)) {
     return;
   }
 
-  if (adapter.name === 'alipay' && componentName === 'picker-view-column') {
-    return;
-  }
-
-  const props = registerProps(componentName, adapter, node);
+  const props = registerProps(componentName, node);
 
   if (!props) {
     return;
@@ -164,8 +172,10 @@ function registerComponent({
   addToComponentCollection(component, importers);
 }
 
-export default (adapter: Adapter) => {
+export default () => {
   importers.clear();
+
+  hostComponents = API.getHostComponents();
 
   return {
     pre(state: any) {
@@ -185,7 +195,6 @@ export default (adapter: Adapter) => {
             const id = kebabCase(componentName);
             registerComponent({
               componentName: id,
-              adapter,
               importer: state.file.opts.filename,
             });
           }
@@ -217,7 +226,6 @@ export default (adapter: Adapter) => {
 
           registerComponent({
             componentName: id,
-            adapter,
             node,
             importer: state.file.opts.filename,
           });
@@ -227,29 +235,14 @@ export default (adapter: Adapter) => {
   };
 };
 
-function getAlipayComponents(adapter: Adapter) {
-  for (const name of adapter.hostComponents.keys()) {
-    registerComponent({
-      componentName: name,
-      adapter,
-    });
-  }
-
-  return convertComponents(importers);
-}
-
-export function getComponents(adapter: Adapter) {
-  if (adapter.name === 'alipay') {
-    return getAlipayComponents(adapter);
-  }
-
-  adapter.hostComponents.forEach((component, componentName) => {
-    if (component.additional) {
-      registerComponent({
+export function getComponents() {
+  hostComponents.forEach((component, componentName) => {
+    registerComponent(
+      {
         componentName,
-        adapter,
-      });
-    }
+      },
+      component.additional
+    );
   });
 
   return convertComponents(importers);

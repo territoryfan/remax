@@ -3,7 +3,6 @@ import { kebabCase, sortBy } from 'lodash';
 import { NodePath } from '@babel/traverse';
 import * as t from '@babel/types';
 import * as path from 'path';
-import { Adapter } from '../../adapters';
 import { isNativeComponent, isPluginComponent, getSourcePath } from './util';
 import { RemaxOptions } from '../../../getConfig';
 import {
@@ -41,7 +40,7 @@ const getHashId = (sourcePath: string, id: string) => {
   return `${id}-0`;
 };
 
-export default (options: RemaxOptions, adapter: Adapter) => {
+export default (options: RemaxOptions) => {
   importers.clear();
 
   return () => ({
@@ -110,7 +109,7 @@ export default (options: RemaxOptions, adapter: Adapter) => {
             .filter(Boolean)
             // 剔除 ref，在 axml 特殊处理
             .filter(k => k !== 'ref')
-            .map(prop => adapter.getNativePropName(prop, true));
+            .map(prop => prop.replace('className', 'class'));
 
           const component = {
             id: sourcePath,

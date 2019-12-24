@@ -3,6 +3,7 @@ import * as babelParser from '@babel/parser';
 import traverse from '@babel/traverse';
 import * as htmlparser2 from 'htmlparser2';
 import { get } from 'lodash';
+import API from '../../../API';
 import { Adapter } from '../../adapters';
 import { getPath, pushArray, readFile } from './util';
 import { output } from '../../utils/output';
@@ -68,8 +69,8 @@ const parseTemplate = (
   parser.end();
 };
 
-export default function jsHelper(id: string, adapter: Adapter) {
-  const { jsHelper, template } = adapter.extensions;
+export default function jsHelper(id: string) {
+  const { jsHelper, template } = API.getMeta();
 
   if (!jsHelper) {
     return;

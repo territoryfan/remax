@@ -15,7 +15,7 @@ describe('API', () => {
   });
 
   it('install plugins in a variety of ways', () => {
-    expect(API.configs).toHaveLength(13);
+    expect(API.configs).toHaveLength(6);
   });
 
   it('install adapter plugin', () => {
@@ -46,34 +46,21 @@ describe('API', () => {
     );
 
     expect(entries).toEqual({
-      app: path.join(remaxOptions.cwd, remaxOptions.rootDir, 'app.js'),
+      app: remaxOptions.cwd,
       pages: [defaultPage, 'page'],
       images: [defaultImage, remaxOptions.cwd],
     });
   });
 
-  it('transformAppPlugins', () => {
-    const babelPlugins = API.transformAppPlugins();
+  it('processProps', () => {
+    const props = API.processProps('text', []);
 
-    expect(babelPlugins).toHaveLength(2);
+    expect(props).toEqual(['p1', 'p2']);
   });
 
-  it('transformPagePlugins', () => {
-    const babelPlugins = API.transformPagePlugins();
-
-    expect(babelPlugins).toHaveLength(2);
-  });
-
-  it('processJSX', () => {
-    const babelPlugins = API.processJSX();
-
-    expect(babelPlugins).toHaveLength(2);
-  });
-
-  it('generateNativeFiles', () => {
-    const rollupPlugins = API.generateNativeFiles();
-
-    expect(rollupPlugins).toHaveLength(2);
+  it('shouldHostComponentRegister', () => {
+    expect(API.shouldHostComponentRegister('view', false)).toBeTruthy();
+    expect(API.shouldHostComponentRegister('swiper-item', false)).toBeFalsy();
   });
 
   it('extendsRollupConfig', () => {
@@ -88,18 +75,40 @@ describe('API', () => {
     });
   });
 
-  it('getExtensions', () => {
-    const extensions = API.getExtensions();
-    expect(extensions).toEqual({
-      template: '.axml',
-      style: '.acss',
-      jsHelper: '.sjs',
-    });
+  it('getHostComponents', () => {
+    expect(API.getHostComponents()).toBeDefined();
+  });
+
+  it('getMeta', () => {
+    const extensions = API.getMeta();
+    expect(extensions).toMatchInlineSnapshot(`
+      Object {
+        "ejs": Object {
+          "jsHelper": "/Users/yuzhi/Workspaces/remax/packages/remax-alipay/templates/helper.js",
+          "page": "/Users/yuzhi/Workspaces/remax/packages/remax-alipay/templates/page.ejs",
+        },
+        "include": Object {
+          "src": "src",
+          "tag": "include",
+        },
+        "jsHelper": Object {
+          "extension": ".sjs",
+          "src": "from",
+          "tag": "import-sjs",
+        },
+        "style": ".acss",
+        "template": Object {
+          "extension": ".axml",
+          "src": "src",
+          "tag": "import",
+        },
+      }
+    `);
   });
 
   it('runtime plugins', () => {
     const plugins = API.getRuntimePlugins(remaxOptions);
 
-    expect(plugins).toHaveLength(2);
+    expect(plugins).toHaveLength(1);
   });
 });
