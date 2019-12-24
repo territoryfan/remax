@@ -23,7 +23,6 @@ import rename from './plugins/rename';
 import replace from '@rollup/plugin-replace';
 import { RemaxOptions } from '../getConfig';
 import app from './plugins/app';
-import adapters, { Adapter } from './adapters';
 import { Context, Env } from '../types';
 import namedExports from 'named-exports-db';
 import fixRegeneratorRuntime from './plugins/fixRegeneratorRuntime';
@@ -39,13 +38,12 @@ import jsx from 'acorn-jsx';
 export default function rollupConfig(
   options: RemaxOptions,
   argv: any,
-  adapter: Adapter,
   context?: Context
 ) {
   const stubModules: string[] = [];
 
-  adapters.forEach(name => {
-    if (adapter.name !== name) {
+  ['wechat', 'alipay', 'toutiao'].forEach(name => {
+    if (API.adapter.name !== name) {
       const esmPackage = `remax/esm/adapters/${name}`;
       const cjsPackage = `remax/cjs/adapters/${name}`;
       stubModules.push(esmPackage);

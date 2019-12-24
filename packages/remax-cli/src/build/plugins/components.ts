@@ -71,24 +71,6 @@ export function addToComponentCollection<T extends Component>(
   });
 }
 
-function shouldRegisterAllProps(node?: t.JSXElement, force?: boolean) {
-  if (force) {
-    return true;
-  }
-
-  if (!node) {
-    return false;
-  }
-
-  if (
-    node.openingElement.attributes.find(a => a.type === 'JSXSpreadAttribute')
-  ) {
-    return true;
-  }
-
-  return false;
-}
-
 function registerProps(componentName: string, node?: t.JSXElement) {
   const hostComponent = hostComponents.get(componentName);
 
@@ -98,21 +80,9 @@ function registerProps(componentName: string, node?: t.JSXElement) {
 
   const usedProps = API.processProps(
     componentName,
-    hostComponent.props.slice()
+    hostComponent.props.slice(),
+    node
   );
-
-  // if (
-  //   adapter.name !== 'alipay' &&
-  //   !shouldRegisterAllProps(node, hostComponent.additional)
-  // ) {
-  //   usedProps = [];
-  // }
-
-  // if (adapter.name === 'wechat' && componentName === 'scroll-view') {
-  //   if (!usedProps.includes('onScroll')) {
-  //     usedProps.push('onScroll');
-  //   }
-  // }
 
   if (node) {
     node.openingElement.attributes.forEach(attr => {
@@ -122,9 +92,7 @@ function registerProps(componentName: string, node?: t.JSXElement) {
 
       const propName = attr.name.name as string;
 
-      if (!usedProps.includes(propName)) {
-        usedProps.push(propName);
-      }
+      usedProps.push(propName);
     });
   }
 
@@ -148,11 +116,8 @@ function registerComponent(
     node?: t.JSXElement;
     importer?: string;
   },
-  additional = false
+  additional?: boolean
 ) {
-  // if (componentName === 'swiper-item') {
-  //   return;
-  // }
   if (!API.shouldHostComponentRegister(componentName, additional)) {
     return;
   }
@@ -241,7 +206,7 @@ export function getComponents() {
       {
         componentName,
       },
-      component.additional
+      component.additional || false
     );
   });
 

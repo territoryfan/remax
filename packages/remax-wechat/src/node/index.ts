@@ -1,13 +1,34 @@
 import * as path from 'path';
+import hostComponents from './hostComponents';
 import { RemaxNodePlugin, Entries } from 'remax-cli';
+
+const EJS_TPL_ROOT = path.join(__dirname, '../templates');
 
 const plugin: RemaxNodePlugin = () => {
   return {
-    extensions: {
-      jsHelper: '.wxs',
+    meta: {
+      template: {
+        extension: '.wxml',
+        tag: 'import',
+        src: 'src',
+      },
       style: '.wxss',
-      template: '.wxml',
+      jsHelper: {
+        extension: '.wxs',
+        tag: 'wxs',
+        src: 'src',
+      },
+      include: {
+        tag: 'include',
+        src: 'src',
+      },
+      ejs: {
+        base: path.join(EJS_TPL_ROOT, 'base.ejs'),
+        page: path.join(EJS_TPL_ROOT, 'page.ejs'),
+        jsHelper: path.join(EJS_TPL_ROOT, 'helper.js'),
+      },
     },
+    hostComponents,
     getEntries({ remaxOptions, appManifest, getEntryPath }) {
       const ROOT_DIR = path.join(remaxOptions.cwd, remaxOptions.rootDir);
       const { pages, subpackages = [], tabBar = { list: [] } } = appManifest;
@@ -62,6 +83,23 @@ const plugin: RemaxNodePlugin = () => {
         );
 
       return entries;
+    },
+    shouldHostComponentRegister: ({ componentName, additional }) =>
+      componentName !== 'swiper-item' && additional !== false,
+    processProps: ({ node, props, componentName }) => {
+      const isSpread =
+        node &&
+        node.openingElement.attributes.find(
+          a => a.type === 'JSXSpreadAttribute'
+        );
+
+      const nextProps = isSpread ? props : [];
+
+      if (componentName === 'scroll-view') {
+        nextProps.push('onScroll');
+      }
+
+      return nextProps;
     },
   };
 };

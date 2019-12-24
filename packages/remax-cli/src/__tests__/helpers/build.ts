@@ -11,7 +11,6 @@ export default async function build(app: string, target: string) {
   API.installAdapterPlugins(target);
 
   const config = getConfig();
-  const adapter = require('../../build/adapters/' + target);
   const rollupOptions = rollupConfig(
     {
       ...config,
@@ -27,8 +26,7 @@ export default async function build(app: string, target: string) {
         '@c': path.resolve(cwd, 'src/components'),
       },
     },
-    false,
-    adapter
+    false
   );
   const bundle = await rollup.rollup(rollupOptions);
   const result = await bundle.generate(

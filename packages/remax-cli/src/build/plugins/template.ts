@@ -85,6 +85,8 @@ async function createBaseTemplate(options: RemaxOptions, meta: Meta) {
     return null;
   }
 
+  const hostComponents = API.getHostComponents();
+
   const components = sortBy(
     getComponents().concat(Object.values(getNativeComponents())),
     'id'
@@ -95,6 +97,7 @@ async function createBaseTemplate(options: RemaxOptions, meta: Meta) {
     {
       components,
       depth: options.UNSAFE_wechatTemplateDepth,
+      viewComponent: hostComponents.get('view'),
     },
     {
       rmWhitespace: options.compressTemplate,

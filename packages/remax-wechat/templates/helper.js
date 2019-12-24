@@ -2,7 +2,7 @@ var tree = {
   root: {
     children: [],
   },
-  lastActionId: -1
+  lastActionId: -1,
 };
 
 function reduce(action) {
@@ -15,7 +15,7 @@ function reduce(action) {
   switch (action.type) {
     case 'clear':
       tree.root = {
-        children: []
+        children: [],
       };
       return tree;
     case 'splice':

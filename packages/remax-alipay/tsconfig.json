@@ -9,6 +9,5 @@
     "outDir": "cjs",
     "downlevelIteration": true
   },
-  "include": ["src/node/**/*", "typings/**/*"],
-  "exclude": []
+  "include": ["src/node/**/*", "typings/**/*"]
 }

@@ -35,7 +35,6 @@
     
   </button>
 </template>
-
   
   <template name="REMAX_TPL_1_canvas">
   <canvas 
@@ -59,7 +58,6 @@
     
   </canvas>
 </template>
-
   
   <template name="REMAX_TPL_1_checkbox">
   <checkbox 
@@ -79,7 +77,6 @@
     
   </checkbox>
 </template>
-
   
   <template name="REMAX_TPL_1_checkbox-group">
   <checkbox-group 
@@ -96,7 +93,6 @@
     
   </checkbox-group>
 </template>
-
   
   <template name="REMAX_TPL_1_contact-button">
   <contact-button 
@@ -117,7 +113,6 @@
     
   </contact-button>
 </template>
-
   
   <template name="REMAX_TPL_1_cover-image">
   <cover-image 
@@ -134,7 +129,6 @@
     
   </cover-image>
 </template>
-
   
   <template name="REMAX_TPL_1_cover-view">
   <cover-view 
@@ -150,7 +144,6 @@
     
   </cover-view>
 </template>
-
   
   <template name="REMAX_TPL_1_form">
   <form 
@@ -168,7 +161,6 @@
     
   </form>
 </template>
-
   
   <template name="REMAX_TPL_1_icon">
   <icon 
@@ -186,7 +178,6 @@
     
   </icon>
 </template>
-
   
   <template name="REMAX_TPL_1_image">
   <image 
@@ -207,7 +198,6 @@
     
   </image>
 </template>
-
   
   <template name="REMAX_TPL_1_input">
   <input 
@@ -243,7 +233,6 @@
     
   </input>
 </template>
-
   
   <template name="REMAX_TPL_1_label">
   <label 
@@ -259,7 +248,6 @@
     
   </label>
 </template>
-
   
   <template name="REMAX_TPL_1_lifestyle">
   <lifestyle 
@@ -273,7 +261,6 @@
     
   </lifestyle>
 </template>
-
   
   <template name="REMAX_TPL_1_map">
   <map 
@@ -307,7 +294,6 @@
     
   </map>
 </template>
-
   
   <template name="REMAX_TPL_1_movable-area">
   <movable-area 
@@ -324,7 +310,6 @@
     
   </movable-area>
 </template>
-
   
   <template name="REMAX_TPL_1_movable-view">
   <movable-view 
@@ -351,7 +336,6 @@
     
   </movable-view>
 </template>
-
   
   <template name="REMAX_TPL_1_navigator">
   <navigator 
@@ -371,7 +355,6 @@
     
   </navigator>
 </template>
-
   
   <template name="REMAX_TPL_1_picker">
   <picker 
@@ -391,7 +374,6 @@
     
   </picker>
 </template>
-
   
   <template name="REMAX_TPL_1_picker-view">
   <picker-view 
@@ -416,7 +398,6 @@
     
   </picker-view>
 </template>
-
   
   <template name="REMAX_TPL_1_progress">
   <progress 
@@ -437,7 +418,6 @@
     
   </progress>
 </template>
-
   
   <template name="REMAX_TPL_1_radio">
   <radio 
@@ -456,7 +436,6 @@
     
   </radio>
 </template>
-
   
   <template name="REMAX_TPL_1_radio-group">
   <radio-group 
@@ -473,7 +452,6 @@
     
   </radio-group>
 </template>
-
   
   <template name="REMAX_TPL_1_rich-text">
   <rich-text 
@@ -495,7 +473,6 @@
     
   </rich-text>
 </template>
-
   
   <template name="REMAX_TPL_1_scroll-view">
   <scroll-view 
@@ -528,7 +505,6 @@
     
   </scroll-view>
 </template>
-
   
   <template name="REMAX_TPL_1_slider">
   <slider 
@@ -557,7 +533,6 @@
     
   </slider>
 </template>
-
   
   <template name="REMAX_TPL_1_swiper">
   <swiper 
@@ -595,7 +570,6 @@
     
   </swiper>
 </template>
-
   
   <template name="REMAX_TPL_1_switch">
   <switch 
@@ -616,7 +590,6 @@
     
   </switch>
 </template>
-
   
   <template name="REMAX_TPL_1_text">
   <text 
@@ -635,7 +608,6 @@
     
   </text>
 </template>
-
   
   <template name="REMAX_TPL_1_textarea">
   <textarea 
@@ -665,7 +637,6 @@
     
   </textarea>
 </template>
-
   
   <template name="REMAX_TPL_1_video">
   <video 
@@ -704,7 +675,6 @@
     
   </video>
 </template>
-
   
   <template name="REMAX_TPL_1_view">
   <view 
@@ -740,7 +710,6 @@
     
   </view>
 </template>
-
   
   <template name="REMAX_TPL_1_web-view">
   <web-view 
@@ -754,7 +723,6 @@
     
   </web-view>
 </template>
-
   
 
 <template name="REMAX_TPL_1_plain-text">

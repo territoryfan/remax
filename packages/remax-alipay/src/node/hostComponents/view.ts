@@ -1,6 +1,5 @@
 export const alias = {
   id: 'id',
-  slot: 'slot',
   disableScroll: 'disable-scroll',
   hoverClass: 'hover-class',
   hoverStartTime: 'hover-start-time',

@@ -1,4 +1,5 @@
 import yargs from 'yargs';
+import * as t from '@babel/types';
 import * as path from 'path';
 import { flatten, merge } from 'lodash';
 import { RollupOptions } from 'rollup';
@@ -40,11 +41,12 @@ export type Meta = {
 export type ProcessPropsOptions = {
   componentName: string;
   props: string[];
+  node?: t.JSXElement;
 };
 
 export type ShouldHostComponentRegister = {
   componentName: string;
-  additional: boolean;
+  additional?: boolean;
 };
 
 export interface RemaxNodePluginConfig {
@@ -73,6 +75,7 @@ export interface RemaxNodePluginConfig {
    * @param options
    * @param options.componentName 组件名称
    * @param options.props 组件属性
+   * @param options.node 组件 babel JSXElement
    * @return 组件对应的属性
    */
   processProps?: (options: ProcessPropsOptions) => string[];
@@ -195,22 +198,28 @@ class API {
     return entries;
   }
 
-  public processProps(componentName: string, props: string[]) {
-    return this.configs.reduce((nextProps, config) => {
+  public processProps(
+    componentName: string,
+    props: string[],
+    node?: t.JSXElement | undefined
+  ) {
+    let nextProps = props;
+    this.configs.forEach(config => {
       if (typeof config.processProps === 'function') {
-        return config.processProps({
+        nextProps = config.processProps({
           componentName,
           props: nextProps,
+          node,
         });
       }
+    });
 
-      return nextProps;
-    }, props);
+    return nextProps;
   }
 
   public shouldHostComponentRegister(
     componentName: string,
-    additional: boolean
+    additional?: boolean
   ) {
     return this.configs.reduce((result, config) => {
       if (typeof config.shouldHostComponentRegister === 'function') {

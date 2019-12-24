@@ -4,7 +4,8 @@
   "description": "Remax for Wechat",
   "main": "index.js",
   "scripts": {
-    "build:node": "tsc --build tsconfig.node.json",
+    "prebuild": "rm -rf cjs",
+    "build:node": "tsc",
     "build": "npm run build:node"
   },
   "repository": "git+https://github.com/remaxjs/remax.git",
