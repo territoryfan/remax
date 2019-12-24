@@ -1,13 +1,28 @@
 import * as path from 'path';
 import { RemaxNodePlugin, Entries } from 'remax-cli';
+import hostComponents from './hostComponents';
+
+const EJS_TPL_ROOT = path.join(__dirname, '../templates');
 
 const plugin: RemaxNodePlugin = () => {
   return {
-    extensions: {
-      jsHelper: '',
+    meta: {
+      template: {
+        extension: '.ttml',
+        tag: 'import',
+        src: 'src',
+      },
       style: '.ttss',
-      template: '.ttml',
+      include: {
+        tag: 'include',
+        src: 'src',
+      },
+      ejs: {
+        base: path.join(EJS_TPL_ROOT, 'base.ejs'),
+        page: path.join(EJS_TPL_ROOT, 'page.ejs'),
+      },
     },
+    hostComponents,
     getEntries({ remaxOptions, appManifest, getEntryPath }) {
       const ROOT_DIR = path.join(remaxOptions.cwd, remaxOptions.rootDir);
       const { pages, subpackages = [], tabBar = { list: [] } } = appManifest;
@@ -63,6 +78,8 @@ const plugin: RemaxNodePlugin = () => {
 
       return entries;
     },
+    shouldHostComponentRegister: ({ componentName }) =>
+      componentName !== 'swiper-item',
   };
 };
 

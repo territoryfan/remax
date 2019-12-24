@@ -22,7 +22,7 @@ export type Meta = {
     src: string;
   };
   style: string;
-  jsHelper: {
+  jsHelper?: {
     extension: string;
     tag: string;
     src: string;

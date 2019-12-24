@@ -6,12 +6,8 @@
     "declaration": true,
     "jsx": "react",
     "types": ["@types/jest", "@types/node"],
-    "outDir": "./"
+    "outDir": "cjs",
+    "downlevelIteration": true
   },
-  "include": [
-    "src/node.ts",
-    "typings/**/*",
-    "./node_modules/@remax/mini-types/types/index.d.ts"
-  ],
-  "exclude": []
+  "include": ["src/node/**/*", "typings/**/*"]
 }
