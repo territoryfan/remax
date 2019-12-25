@@ -1,6 +1,6 @@
 {
   "name": "remax-alipay",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Remax for Alipay",
   "main": "index.js",
   "scripts": {
@@ -10,26 +10,13 @@
   },
   "repository": "git+https://github.com/remaxjs/remax.git",
   "license": "MIT",
-  "dependencies": {
-    "@remax/mini-types": "^0.1.0",
-    "acorn-walk": "^7.0.0",
-    "ejs": "^3.0.1",
-    "htmlparser2": "^4.0.0",
-    "lodash": "^4.17.15",
-    "magic-string": "^0.25.4",
-    "postcss": "^7.0.25",
-    "resolve": "^1.14.1",
-    "slash2": "^2.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@babel/traverse": "^7.7.4",
-    "@babel/types": "^7.7.4",
-    "@types/babel__traverse": "^7.0.8",
-    "@types/ejs": "^3.0.0",
+    "@remax/mini-types": "^0.1.0",
     "@types/jest": "^24.0.24",
-    "@types/lodash": "^4.14.149",
-    "@types/resolve": "^0.0.8",
-    "rollup": "^1.27.14",
+    "@types/react": "^16.9.17",
+    "react": "^16.12.0",
+    "remax": "1.11.0-alpha.0",
     "typescript": "^3.7.4"
   }
 }

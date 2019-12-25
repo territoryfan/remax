@@ -3,15 +3,6 @@ import { NodePath } from '@babel/traverse';
 import { kebabCase, cloneDeep } from 'lodash';
 import API from '../../API';
 
-let hostComponents: Map<
-  string,
-  {
-    props: string[];
-    alias?: any;
-    additional?: boolean;
-  }
->;
-
 export interface Component {
   id: string;
   props: Set<string>;
@@ -72,7 +63,7 @@ export function addToComponentCollection<T extends Component>(
 }
 
 function registerProps(componentName: string, node?: t.JSXElement) {
-  const hostComponent = hostComponents.get(componentName);
+  const hostComponent = API.getHostComponents().get(componentName);
 
   if (!hostComponent) {
     return;
@@ -81,6 +72,7 @@ function registerProps(componentName: string, node?: t.JSXElement) {
   const usedProps = API.processProps(
     componentName,
     hostComponent.props.slice(),
+    hostComponent.additional,
     node
   );
 
@@ -139,8 +131,6 @@ function registerComponent(
 
 export default () => {
   importers.clear();
-
-  hostComponents = API.getHostComponents();
 
   return {
     pre(state: any) {
@@ -201,7 +191,7 @@ export default () => {
 };
 
 export function getComponents() {
-  hostComponents.forEach((component, componentName) => {
+  API.getHostComponents().forEach((component, componentName) => {
     registerComponent(
       {
         componentName,

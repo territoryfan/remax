@@ -32,6 +32,7 @@ export default async function build(app: string, target: string) {
   const result = await bundle.generate(
     rollupOptions.output! as rollup.OutputOptions
   );
+
   return result.output
     .filter(c => !/(node_modules|_virtual|npm)/.test(c.fileName))
     .map(c => {

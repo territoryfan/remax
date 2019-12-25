@@ -42,6 +42,7 @@ export type ProcessPropsOptions = {
   componentName: string;
   props: string[];
   node?: t.JSXElement;
+  additional?: boolean;
 };
 
 export type ShouldHostComponentRegister = {
@@ -76,6 +77,7 @@ export interface RemaxNodePluginConfig {
    * @param options.componentName 组件名称
    * @param options.props 组件属性
    * @param options.node 组件 babel JSXElement
+   * @param options.additional 是否用户额外创建的 host 组件
    * @return 组件对应的属性
    */
   processProps?: (options: ProcessPropsOptions) => string[];
@@ -201,6 +203,7 @@ class API {
   public processProps(
     componentName: string,
     props: string[],
+    additional?: boolean,
     node?: t.JSXElement | undefined
   ) {
     let nextProps = props;
@@ -209,6 +212,7 @@ class API {
         nextProps = config.processProps({
           componentName,
           props: nextProps,
+          additional,
           node,
         });
       }

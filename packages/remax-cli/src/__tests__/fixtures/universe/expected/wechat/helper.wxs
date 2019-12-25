@@ -13,7 +13,7 @@ function reduce(action) {
   tree.lastActionId = action.id;
 
   switch (action.type) {
-    case 'clear': 
+    case 'clear':
       tree.root = {
         children: []
       };
@@ -98,8 +98,6 @@ function get(obj, path) {
   return nextObj;
 }
 
-
 module.exports = {
   reduce: reduce,
 };
-

@@ -1,10 +1,9 @@
 import * as path from 'path';
-import { RemaxNodePlugin, Entries } from 'remax-cli';
 import hostComponents from './hostComponents';
 
 const EJS_TPL_ROOT = path.join(__dirname, '../templates');
 
-const plugin: RemaxNodePlugin = () => {
+const plugin = () => {
   return {
     meta: {
       template: {
@@ -23,7 +22,7 @@ const plugin: RemaxNodePlugin = () => {
       },
     },
     hostComponents,
-    getEntries({ remaxOptions, appManifest, getEntryPath }) {
+    getEntries({ remaxOptions, appManifest, getEntryPath }: any) {
       const ROOT_DIR = path.join(remaxOptions.cwd, remaxOptions.rootDir);
       const { pages, subpackages = [], tabBar = { list: [] } } = appManifest;
 
@@ -31,7 +30,7 @@ const plugin: RemaxNodePlugin = () => {
         throw new Error('app.config.js|ts 并未配置页面参数');
       }
 
-      const entries: Entries = {
+      const entries: any = {
         app: '',
         pages: [],
         images: [],
@@ -78,7 +77,7 @@ const plugin: RemaxNodePlugin = () => {
 
       return entries;
     },
-    shouldHostComponentRegister: ({ componentName }) =>
+    shouldHostComponentRegister: ({ componentName }: any) =>
       componentName !== 'swiper-item',
   };
 };

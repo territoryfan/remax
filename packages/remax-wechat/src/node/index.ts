@@ -1,10 +1,9 @@
 import * as path from 'path';
 import hostComponents from './hostComponents';
-import { RemaxNodePlugin, Entries } from 'remax-cli';
 
 const EJS_TPL_ROOT = path.join(__dirname, '../templates');
 
-const plugin: RemaxNodePlugin = () => {
+const plugin = () => {
   return {
     meta: {
       template: {
@@ -29,7 +28,7 @@ const plugin: RemaxNodePlugin = () => {
       },
     },
     hostComponents,
-    getEntries({ remaxOptions, appManifest, getEntryPath }) {
+    getEntries({ remaxOptions, appManifest, getEntryPath }: any) {
       const ROOT_DIR = path.join(remaxOptions.cwd, remaxOptions.rootDir);
       const { pages, subpackages = [], tabBar = { list: [] } } = appManifest;
 
@@ -37,7 +36,7 @@ const plugin: RemaxNodePlugin = () => {
         throw new Error('app.config.js|ts 并未配置页面参数');
       }
 
-      const entries: Entries = {
+      const entries: any = {
         app: '',
         pages: [],
         images: [],
@@ -84,16 +83,16 @@ const plugin: RemaxNodePlugin = () => {
 
       return entries;
     },
-    shouldHostComponentRegister: ({ componentName, additional }) =>
+    shouldHostComponentRegister: ({ componentName, additional }: any) =>
       componentName !== 'swiper-item' && additional !== false,
-    processProps: ({ node, props, componentName }) => {
+    processProps: ({ node, props, componentName, additional }: any) => {
       const isSpread =
         node &&
         node.openingElement.attributes.find(
-          a => a.type === 'JSXSpreadAttribute'
+          (a: any) => a.type === 'JSXSpreadAttribute'
         );
 
-      const nextProps = isSpread ? props : [];
+      const nextProps = isSpread || additional ? props : [];
 
       if (componentName === 'scroll-view') {
         nextProps.push('onScroll');

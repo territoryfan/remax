@@ -46,7 +46,9 @@ async function createTemplate(
     {
       ...renderOptions,
       components,
-      viewComponent: hostComponents.get('view'),
+      viewComponent: {
+        props: new Set(hostComponents.get('view').props.sort()),
+      },
     },
     {
       rmWhitespace: options.compressTemplate,
@@ -97,7 +99,9 @@ async function createBaseTemplate(options: RemaxOptions, meta: Meta) {
     {
       components,
       depth: options.UNSAFE_wechatTemplateDepth,
-      viewComponent: hostComponents.get('view'),
+      viewComponent: {
+        props: new Set(hostComponents.get('view').props.sort()),
+      },
     },
     {
       rmWhitespace: options.compressTemplate,

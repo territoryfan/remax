@@ -98,8 +98,6 @@ function get(obj, path) {
   return nextObj;
 }
 
-
 export default  {
   reduce
 }
-

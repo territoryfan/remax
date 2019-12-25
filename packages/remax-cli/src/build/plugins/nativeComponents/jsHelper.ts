@@ -4,7 +4,6 @@ import traverse from '@babel/traverse';
 import * as htmlparser2 from 'htmlparser2';
 import { get } from 'lodash';
 import API from '../../../API';
-import { Adapter } from '../../adapters';
 import { getPath, pushArray, readFile } from './util';
 import { output } from '../../utils/output';
 
@@ -39,10 +38,7 @@ const walk = (jsHelperPath: string) => {
   });
 };
 
-const parseTemplate = (
-  filePath: string,
-  jsHelper: Adapter['extensions']['jsHelper']
-) => {
+const parseTemplate = (filePath: string, jsHelper: any) => {
   const parser = new htmlparser2.Parser({});
 
   const { tag, src } = jsHelper!;

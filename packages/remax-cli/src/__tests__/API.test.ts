@@ -81,27 +81,25 @@ describe('API', () => {
 
   it('getMeta', () => {
     const extensions = API.getMeta();
-    expect(extensions).toMatchInlineSnapshot(`
+    expect(extensions.include).toMatchInlineSnapshot(`
       Object {
-        "ejs": Object {
-          "jsHelper": "/Users/yuzhi/Workspaces/remax/packages/remax-alipay/templates/helper.js",
-          "page": "/Users/yuzhi/Workspaces/remax/packages/remax-alipay/templates/page.ejs",
-        },
-        "include": Object {
-          "src": "src",
-          "tag": "include",
-        },
-        "jsHelper": Object {
-          "extension": ".sjs",
-          "src": "from",
-          "tag": "import-sjs",
-        },
-        "style": ".acss",
-        "template": Object {
-          "extension": ".axml",
-          "src": "src",
-          "tag": "import",
-        },
+        "src": "src",
+        "tag": "include",
+      }
+    `);
+    expect(extensions.jsHelper).toMatchInlineSnapshot(`
+      Object {
+        "extension": ".sjs",
+        "src": "from",
+        "tag": "import-sjs",
+      }
+    `);
+    expect(extensions.style).toMatchInlineSnapshot(`".acss"`);
+    expect(extensions.template).toMatchInlineSnapshot(`
+      Object {
+        "extension": ".axml",
+        "src": "src",
+        "tag": "import",
       }
     `);
   });
